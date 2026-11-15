@@ -1,0 +1,17 @@
+services:
+  - type: worker
+    name: nightshift-sentinel-monitor
+    runtime: node
+    plan: 0.5c-512mb
+    region: ohio
+    numInstances: 1
+    buildCommand: npm test
+    startCommand: npm start
+    autoDeployTrigger: 'off'
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: MONITOR_INTERVAL_MS
+        value: '15000'
+      - key: NIGHTSHIFT_SITE_TOKEN
+        sync: false
