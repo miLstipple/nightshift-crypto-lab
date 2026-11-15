@@ -18,6 +18,33 @@ Coinbase strategies still need approved validation on untouched data, fees and b
 
 ## Verification and deployment status
 
-The monitoring-only test command explicitly runs runner.test.mjs. Eight synthetic-fixture tests cover origin restrictions, redacted errors, timeouts, shutdown, non-overlap, response limits, mixed venues and independent timestamp freshness. These are software checks, not strategy backtests or paper performance. Source is prepared for deployment but no continuous service is claimed. A fresh-observations receipt validates timestamps only; it does not establish executable liquidity or trading readiness.
+The test command runs monitor, paper-accounting and persistence suites. Twenty-one
+synthetic-fixture tests passed. These are software checks, not strategy backtests
+or paper performance. Source is not deployed. A fresh-observations receipt validates
+timestamps only; it does not establish executable liquidity or trading readiness.
 
-The unfinished paper-execution test draft is excluded from this release because its implementation does not exist. No fill adapter is shipped. Deployment still requires a host, verified unattended credential access, a single-worker configuration, and live process verification.
+## Forward paper accounting components (not yet deployed or wired to runner)
+
+`paper.mjs` applies a supplied order to a supplied Coinbase depth snapshot using
+fixed-point decimals. Buys walk asks; sells walk bids; insufficient depth rejects
+the entire order. All fills are explicitly simulated, with configured estimated
+fees and no latency model. No live order API or keys are present.
+
+`store.mjs` serializes account updates, fsyncs an atomic snapshot and rejects a
+second writer. A persistent disk is mandatory in deployment. A crash can leave
+`writer.lock`; inspect persisted state before manually removing that lock.
+The component is not connected to the Site ledger; never initialize it as a
+second account alongside the existing $500 account. Import/reconcile that
+account before integration.
+
+Entry checks: supplied frozen qualification evidence, all four gates, net
+buy-and-hold pass, 1% trade risk and 2% aggregate stop risk. Inputs are internal
+trusted objects, not authenticated evidence: no public order endpoint may accept
+client-supplied qualification. The production integration must resolve evidence
+from a trusted registry. Market-state integration, cross-asset fresh marking,
+persistent drawdown/daily-loss halts, automatic protective exits, product
+increments/minimums, fee configuration, runner wiring and dashboard reconciliation
+are still pending. This is an accounting component, not an operating desk.
+
+All tests use synthetic fixtures; passing tests are not strategy qualification,
+forward-paper performance, continuous heartbeats, or actual order activity.
