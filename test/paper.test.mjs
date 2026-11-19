@@ -17,3 +17,20 @@ test('three losing exits halt entries but permit reducing remaining exposure',()
 test('15 percent marked drawdown halts new entries',()=>{const a=run().account;const b={...book(),bids:[['20','10']],asks:[['21','10']]};assert.throws(()=>run(a,{book:b,order:{...order(),id:'next'}}),/halt/);});
 test('rejects position risk over two percent and repeated symbol entry',()=>{const a=run().account;assert.throws(()=>run(a,{order:{...order(),id:'again'}}),/position/);const otherBook={...book(),symbol:'ETH-USD'};const otherOrder={...order(),id:'b2',symbol:'ETH-USD',stop:'96'};const b=run(a,{book:otherBook,order:otherOrder}).account;assert.throws(()=>run(b,{book:{...book(),symbol:'SOL-USD'},order:{...order(),id:'b3',symbol:'SOL-USD'}}),/risk/);});
 test('rejects overprecision or nonpositive quantities instead of rounding up exposure',()=>{for(const quantity of ['0','-1','0.123456789','Infinity'])assert.throws(()=>run(undefined,{order:{...order(),quantity}}));});
+test('new exposure rejects stale or missing marks on another held asset',()=>{
+ const a=run().account;
+ const later=now+30001;
+ const eth={...book(),symbol:'ETH-USD',receivedAt:later,exchangeAt:later};
+ const buy={...order(),id:'later-eth',symbol:'ETH-USD'};
+ assert.throws(()=>run(a,{order:buy,book:eth,now:later}),/stale_position_mark/);
+ const missing=structuredClone(a);delete missing.positions[0].markReceivedAt;
+ assert.throws(()=>run(missing,{order:buy,book:{...eth,receivedAt:now,exchangeAt:now}}),/stale_position_mark/);
+ const future=structuredClone(a);future.positions[0].markReceivedAt=now+1001;
+ assert.throws(()=>run(future,{order:buy,book:{...eth,receivedAt:now,exchangeAt:now}}),/stale_position_mark/);
+});
+test('stale marks on another asset do not prevent a fresh risk-reducing sale',()=>{
+ const a=run().account;
+ a.positions.push({...a.positions[0],symbol:'ETH-USD',markReceivedAt:now-30001});
+ const r=run(a,{order:{...order(),id:'exit-btc',side:'sell'},qualification:null});
+ assert.equal(r.fill.side,'sell');assert.equal(r.account.positions[0].symbol,'ETH-USD');
+});

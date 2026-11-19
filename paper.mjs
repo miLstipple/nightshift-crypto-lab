@@ -47,7 +47,13 @@ export function executePaperOrder({account,order,book,qualification,now}) {
  if(order.side==='buy') {
   if(a.halted)fail('halted');
   qualified(qualification,order);
-  // Conservative equity: other assets retain their last supplied executable bid mark.
+  // A cached price without a recent source timestamp cannot justify new risk.
+  // Exits validate their own book and remain possible when another feed is stale.
+  for (const held of a.positions) {
+   if (held.symbol === book.symbol) continue;
+   const recent = t => Number.isFinite(t) && now-t >= -1000 && now-t <= 30000;
+   if (!recent(held.markReceivedAt) || (held.markExchangeAt != null && !recent(held.markExchangeAt))) fail('stale_position_mark');
+  }
   const equity=cash+a.positions.reduce((sum,p)=>sum+D(p.quantity)*(p.symbol===book.symbol?sides.bids[0][0]:D(p.markBid))/S,0n);
   const peak=D(a.peakEquity);
   if(equity*100n<=peak*85n)fail('halt_drawdown');
@@ -59,7 +65,7 @@ export function executePaperOrder({account,order,book,qualification,now}) {
   const totalRisk=a.positions.reduce((s,p)=>s+D(p.risk),risk);
   if(totalRisk*100n>equity*2n)fail('aggregate_risk');
   a.cash=F(cash-notional-fee);
-  a.positions.push({symbol:order.symbol,quantity:F(qty),cost:F(notional+fee),stop:F(stop),risk:F(risk),markBid:F(sides.bids[0][0]),strategyId:order.strategyId});
+  a.positions.push({symbol:order.symbol,quantity:F(qty),cost:F(notional+fee),stop:F(stop),risk:F(risk),markBid:F(sides.bids[0][0]),markReceivedAt:book.receivedAt,markExchangeAt:book.exchangeAt??null,strategyId:order.strategyId});
   if(equity>peak)a.peakEquity=F(equity);
  } else {
   if(!position||D(position.quantity)<qty)fail('insufficient_position');
