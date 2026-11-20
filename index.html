@@ -646,7 +646,7 @@
       <!-- ================= SECTION 2: ADJUSTABLE TRADINGVIEW PRO CHART + ASSET BLUEPRINT ================= -->
       <section id="sec-CHART" class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <div class="xl:col-span-8 surface-card p-3.5 flex flex-col">
-          <!-- TradingView Toolbar -->
+          <!-- TradingView Pro Toolbar -->
           <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[var(--border-dim)]">
             <div class="flex items-center gap-2 flex-wrap">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -655,38 +655,57 @@
               <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold" id="tv-status-pill">
                 CYCLE #2 SHORT • TP1 BANKED
               </span>
-              <div class="flex items-center gap-0.5 bg-[var(--bg-elevated)] p-0.5 rounded border border-[var(--border-dim)] font-mono text-[10px]">
-                <button onclick="setTf('1m')" id="tf-1m" class="px-1.5 py-0.5 rounded text-[var(--text-muted)] cursor-pointer">1m</button>
-                <button onclick="setTf('5m')" id="tf-5m" class="px-1.5 py-0.5 rounded text-[var(--text-muted)] cursor-pointer">5m</button>
-                <button onclick="setTf('15m')" id="tf-15m" class="px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold cursor-pointer">15m</button>
-                <button onclick="setTf('1H')" id="tf-1H" class="px-1.5 py-0.5 rounded text-[var(--text-muted)] cursor-pointer">1H</button>
-                <button onclick="setTf('4H')" id="tf-4H" class="px-1.5 py-0.5 rounded text-[var(--text-muted)] cursor-pointer">4H</button>
+              <!-- Active Timeframe Switcher (Loads 90 Candles + Live Hyperliquid candleSnapshot) -->
+              <div class="flex items-center gap-0.5 bg-[var(--bg-elevated)] p-0.5 rounded border border-[var(--border-dim)] font-mono text-[10.5px]">
+                <button type="button" onclick="setTf('1m')" id="tf-1m" class="px-2 py-0.5 rounded text-[var(--text-muted)] hover:text-white cursor-pointer">1m</button>
+                <button type="button" onclick="setTf('5m')" id="tf-5m" class="px-2 py-0.5 rounded text-[var(--text-muted)] hover:text-white cursor-pointer">5m</button>
+                <button type="button" onclick="setTf('15m')" id="tf-15m" class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold cursor-pointer">15m</button>
+                <button type="button" onclick="setTf('1H')" id="tf-1H" class="px-2 py-0.5 rounded text-[var(--text-muted)] hover:text-white cursor-pointer">1H</button>
+                <button type="button" onclick="setTf('4H')" id="tf-4H" class="px-2 py-0.5 rounded text-[var(--text-muted)] hover:text-white cursor-pointer">4H</button>
               </div>
+              <span id="tv-candle-count-badge" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                90 bars • 15m
+              </span>
             </div>
 
+            <!-- TradingView 2D Zoom (XY / Vertical Y / Horizontal X) & Overlay Controls -->
             <div class="flex items-center gap-1 font-mono text-[10px] flex-wrap">
-              <button onclick="zoomChart(1.25)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border-dim)] cursor-pointer">🔍+</button>
-              <button onclick="zoomChart(0.8)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border-dim)] cursor-pointer">🔍−</button>
-              <button onclick="resetChartView()" class="px-2 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border-dim)] text-sky-400 cursor-pointer">⟲ Auto-Fit</button>
-              <button onclick="toggleOverlay('rrBox')" id="ov-rrBox" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">R:R Tool ✓</button>
-              <button onclick="toggleOverlay('pins')" id="ov-pins" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 cursor-pointer">Candle Fills ✓</button>
-              <button onclick="toggleOverlay('vpvr')" id="ov-vpvr" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer">VPVR ✓</button>
-              <button onclick="toggleChartHeight()" id="btn-chart-size" class="px-2 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border-dim)] cursor-pointer">↕ Expand</button>
+              <button type="button" onclick="zoomChart(1.22, 1.22)" title="Zoom In Both X & Y Axes" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-sky-400 border border-[var(--border-dim)] cursor-pointer font-bold">🔍+ XY</button>
+              <button type="button" onclick="zoomChart(0.82, 0.82)" title="Zoom Out Both X & Y Axes" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-sky-400 border border-[var(--border-dim)] cursor-pointer font-bold">🔍− XY</button>
+              <button type="button" onclick="zoomChart(1.0, 1.28)" title="Zoom In Vertical Price Axis (Y)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-emerald-400 border border-[var(--border-dim)] text-emerald-300 cursor-pointer">↕ Y+</button>
+              <button type="button" onclick="zoomChart(1.0, 0.78)" title="Zoom Out Vertical Price Axis (Y)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-emerald-400 border border-[var(--border-dim)] text-emerald-300 cursor-pointer">↕ Y−</button>
+              <button type="button" onclick="zoomChart(1.28, 1.0)" title="Zoom In Horizontal Timeframe Axis (X)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-amber-400 border border-[var(--border-dim)] text-amber-300 cursor-pointer">↔ X+</button>
+              <button type="button" onclick="zoomChart(0.78, 1.0)" title="Zoom Out Horizontal Timeframe Axis (X)" class="px-2 py-1 rounded bg-[var(--bg-elevated)] hover:border-amber-400 border border-[var(--border-dim)] text-amber-300 cursor-pointer">↔ X−</button>
+              <button type="button" onclick="resetChartView()" title="Reset & Auto-Fit Price/Time (Double-click canvas)" class="px-2 py-1 rounded bg-sky-500/20 border border-sky-500/40 text-sky-300 font-bold cursor-pointer">🅰 Auto-Fit</button>
+              <button type="button" onclick="toggleOverlay('rrBox')" id="ov-rrBox" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">R:R ✓</button>
+              <button type="button" onclick="toggleOverlay('pins')" id="ov-pins" class="px-2 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 cursor-pointer">Fills ✓</button>
+              <button type="button" onclick="toggleOverlay('vpvr')" id="ov-vpvr" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer">VPVR ✓</button>
+              <button type="button" onclick="toggleOverlay('ema')" id="ov-ema" class="px-2 py-1 rounded bg-violet-500/20 text-violet-300 border border-violet-500/40 cursor-pointer">EMA/VWAP ✓</button>
+              <button type="button" onclick="toggleChartHeight()" id="btn-chart-size" class="px-2 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border-dim)] cursor-pointer">↕ Expand</button>
             </div>
           </div>
 
           <!-- Coin Bar inside Chart -->
           <div class="flex items-center gap-1 py-2 overflow-x-auto border-b border-[var(--border-dim)] font-mono text-[10px]" id="chart-coin-bar"></div>
 
-          <!-- Hover OHLC + Fill Callout Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-2 py-1.5 px-2 bg-[var(--bg-elevated)]/60 border-b border-[var(--border-dim)] text-[10.5px] font-mono">
-            <div id="tv-hover-hud" class="text-[var(--text-muted)]">
-              🖱️ <b>TradingView Controls:</b> Scroll wheel to Zoom • Drag canvas to Pan • Drag right Price Axis to scale Y • Hover any candle for fills
+          <!-- TradingView Live OHLCV + Indicator Header Strip -->
+          <div class="flex flex-wrap items-center justify-between gap-2 py-1.5 px-2.5 bg-[var(--bg-elevated)]/70 border-b border-[var(--border-dim)] text-[10.5px] font-mono">
+            <div id="tv-ohlc-bar" class="flex items-center gap-2.5 flex-wrap">
+              <span class="font-bold text-[var(--text-main)]">O <span class="text-emerald-400" id="hud-o">—</span></span>
+              <span class="font-bold text-[var(--text-main)]">H <span class="text-emerald-400" id="hud-h">—</span></span>
+              <span class="font-bold text-[var(--text-main)]">L <span class="text-rose-400" id="hud-l">—</span></span>
+              <span class="font-bold text-[var(--text-main)]">C <span class="text-sky-400" id="hud-c">—</span></span>
+              <span class="font-bold text-[var(--text-muted)]">Vol <span class="text-amber-300" id="hud-v">—</span></span>
+              <span class="text-cyan-400" id="hud-ema">EMA20: —</span>
+              <span class="text-violet-400" id="hud-vwap">VWAP: —</span>
+            </div>
+            <div id="tv-hover-hud" class="text-[10px] text-[var(--text-dim)]">
+              🖱️ Drag canvas = 2D Pan (X+Y) • Drag right axis = Scale Y • Drag bottom axis = Scale X • Wheel/Pinch = 2D Zoom • Dbl-Click = Auto-Fit
             </div>
           </div>
 
           <!-- Interactive Canvas -->
-          <div id="tv-canvas-wrap" class="relative w-full h-[430px] select-none overflow-hidden rounded-b-lg" style="cursor: crosshair;">
+          <div id="tv-canvas-wrap" class="relative w-full h-[460px] select-none overflow-hidden rounded-b-lg" style="cursor: crosshair; touch-action: none;">
             <canvas id="tv-canvas" class="w-full h-full block"></canvas>
           </div>
         </div>
@@ -1469,14 +1488,17 @@
     let curTf = '15m';
     let chartZoom = 1.0;
     let chartPanX = 0;
+    let chartPanY = 0;
     let chartScaleY = 1.0;
     let chartExpanded = false;
     let isDraggingX = false;
     let isDraggingY = false;
+    let isDraggingBottomX = false;
     let dragStartX = 0;
     let dragStartY = 0;
+    let dragStartPanY = 0;
     let hoverMouse = null;
-    let overlays = { rrBox: true, pins: true, vpvr: true };
+    let overlays = { rrBox: true, pins: true, vpvr: true, ema: true };
     let scrubFilter = 'ALL';
     let logCategoryFilter = 'ALL';
     let watchdogPurgedCount = 0;
@@ -1564,10 +1586,13 @@
     function selectCoin(sym) {
       curSym = sym;
       chartPanX = 0;
+      chartPanY = 0;
       chartScaleY = 1.0;
+      ensureTimeframeCandles(sym, curTf);
       renderCoinSelectors();
       updateInspectorAndFocusCard();
       drawTradingViewChart();
+      fetchHyperliquidCandles(sym, curTf);
     }
 
     function updateInspectorAndFocusCard() {
@@ -1728,34 +1753,207 @@
       }
     }, 4200);
 
-    // TRADINGVIEW CHART ENGINE
-    function zoomChart(f) {
-      chartZoom = Math.max(0.6, Math.min(3.0, chartZoom * f));
+    // ================= TRADINGVIEW PRO MULTI-TIMEFRAME (1m/5m/15m/1H/4H) + 2D ZOOM/PAN ENGINE =================
+    const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1H': 60, '4H': 240 };
+    const TF_HL_MAP  = { '1m': '1m', '5m': '5m', '15m': '15m', '1H': '1h', '4H': '4h' };
+    const TF_VOL_MULT = { '1m': 0.0016, '5m': 0.0032, '15m': 0.0055, '1H': 0.0105, '4H': 0.0195 };
+
+    // Generates a rich 90-candle OHLCV series for any (sym, tf) + preserves trade execution fill pins
+    function ensureTimeframeCandles(sym, tf) {
+      const c = COINS[sym];
+      if (!c) return [];
+      if (!c.tfCandles) c.tfCandles = {};
+      if (!c.baseMarkers) {
+        c.baseMarkers = (c.markers || []).map((m, idx, arr) => ({
+          ...m,
+          relFromEnd: Math.max(1, (arr.length - idx) * 6)
+        }));
+      }
+
+      if (!c.tfCandles[tf] || c.tfCandles[tf].length < 40) {
+        const count = 90;
+        const stepMin = TF_MINUTES[tf] || 15;
+        const stepMs = stepMin * 60 * 1000;
+        const nowMs = Date.now();
+        const refPx = c.px || c.entry || 100;
+        const volPct = TF_VOL_MULT[tf] || 0.0055;
+
+        // Deterministic PRNG seeded by sym + tf so each timeframe has realistic distinct structure
+        let seed = 0;
+        const keyStr = `${sym}_${tf}`;
+        for (let k = 0; k < keyStr.length; k++) seed = (seed * 31 + keyStr.charCodeAt(k)) % 1000003;
+        const rand = () => {
+          seed = (seed * 16807 + 11) % 2147483647;
+          return (seed % 10000) / 10000;
+        };
+
+        // Construct a realistic institutional price path that sweeps VAH/Entry, tests TP1, and lands at live mark c.px
+        const startAnchor = c.side && c.side.includes('SHORT')
+          ? refPx * (1 + volPct * 6.5)
+          : refPx * (1 - volPct * 6.5);
+        const midPeakAnchor = c.entry || refPx * 1.012;
+        const dipAnchor = c.tp1 || refPx * 0.988;
+
+        const genBars = [];
+        let curClose = startAnchor;
+
+        for (let i = 0; i < count; i++) {
+          const prog = i / (count - 1);
+          // Piece-wise structural target wave so chart shows clear trend, pullback, entry sweep, and current battle
+          let targetPx = refPx;
+          if (prog < 0.35) {
+            const p = prog / 0.35;
+            targetPx = startAnchor + (midPeakAnchor - startAnchor) * p;
+          } else if (prog < 0.72) {
+            const p = (prog - 0.35) / 0.37;
+            targetPx = midPeakAnchor + (dipAnchor - midPeakAnchor) * p;
+          } else {
+            const p = (prog - 0.72) / 0.28;
+            targetPx = dipAnchor + (refPx - dipAnchor) * p;
+          }
+
+          const open = curClose;
+          const wave = Math.sin(i * 0.42) * refPx * volPct * 0.55;
+          const noise = (rand() - 0.49) * refPx * volPct * 1.35;
+          let close = open + (targetPx - open) * 0.28 + wave * 0.35 + noise;
+          if (i === count - 1) close = refPx;
+
+          const bodyHigh = Math.max(open, close);
+          const bodyLow  = Math.min(open, close);
+          const upperWick = (0.25 + rand() * 1.15) * refPx * volPct * 0.75;
+          const lowerWick = (0.25 + rand() * 1.15) * refPx * volPct * 0.75;
+          const high = +(bodyHigh + upperWick).toFixed(6);
+          const low  = +(Math.max(refPx * 0.1, bodyLow - lowerWick)).toFixed(6);
+
+          const barTime = new Date(nowMs - (count - 1 - i) * stepMs);
+          const hh = String(barTime.getHours()).padStart(2, '0');
+          const mm = String(barTime.getMinutes()).padStart(2, '0');
+          const timeLbl = stepMin >= 60 ? `${barTime.getMonth()+1}/${barTime.getDate()} ${hh}:${mm}` : `${hh}:${mm}`;
+          const volVal = Math.round((220 + rand() * 880) * (1 + Math.abs(close - open) / (refPx * volPct + 1e-9)));
+
+          genBars.push({
+            t: timeLbl,
+            o: +open.toFixed(6),
+            h: high,
+            l: low,
+            c: +close.toFixed(6),
+            v: volVal
+          });
+          curClose = close;
+        }
+        c.tfCandles[tf] = genBars;
+      }
+
+      c.candles = c.tfCandles[tf];
+      // Map markers onto the active 90-candle array near the right edge so trade pins always appear on-screen
+      if (c.baseMarkers && c.candles.length > 10) {
+        c.markers = c.baseMarkers.map(bm => ({
+          ...bm,
+          idx: Math.max(2, Math.min(c.candles.length - 2, c.candles.length - 1 - (bm.relFromEnd || 8)))
+        }));
+      }
+      const badge = document.getElementById('tv-candle-count-badge');
+      if (badge) {
+        badge.textContent = `${c.candles.length} bars • ${tf}${c.hlLiveTf && c.hlLiveTf[tf] ? ' • HL LIVE' : ''}`;
+      }
+      return c.candles;
+    }
+
+    // Fetches real live OHLCV candles from Hyperliquid API (`candleSnapshot`) for any coin & timeframe
+    async function fetchHyperliquidCandles(sym, tf) {
+      const c = COINS[sym];
+      if (!c) return;
+      const hlInterval = TF_HL_MAP[tf] || '15m';
+      const stepMin = TF_MINUTES[tf] || 15;
+      const endTime = Date.now();
+      const startTime = endTime - 95 * stepMin * 60 * 1000;
+      try {
+        const res = await fetch('https://api.hyperliquid.xyz/info', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'candleSnapshot',
+            req: { coin: sym, interval: hlInterval, startTime, endTime }
+          })
+        });
+        if (!res.ok) return;
+        const raw = await res.json();
+        if (Array.isArray(raw) && raw.length >= 15) {
+          const parsed = raw.slice(-90).map(k => {
+            const dt = new Date(k.t);
+            const hh = String(dt.getHours()).padStart(2, '0');
+            const mm = String(dt.getMinutes()).padStart(2, '0');
+            const tLbl = stepMin >= 60 ? `${dt.getMonth()+1}/${dt.getDate()} ${hh}:${mm}` : `${hh}:${mm}`;
+            return {
+              t: tLbl,
+              o: parseFloat(k.o),
+              h: parseFloat(k.h),
+              l: parseFloat(k.l),
+              c: parseFloat(k.c),
+              v: parseFloat(k.v || 500)
+            };
+          });
+          if (!c.tfCandles) c.tfCandles = {};
+          if (!c.hlLiveTf) c.hlLiveTf = {};
+          c.tfCandles[tf] = parsed;
+          c.hlLiveTf[tf] = true;
+          if (sym === curSym && tf === curTf) {
+            c.candles = parsed;
+            if (c.baseMarkers) {
+              c.markers = c.baseMarkers.map(bm => ({
+                ...bm,
+                idx: Math.max(2, Math.min(c.candles.length - 2, c.candles.length - 1 - (bm.relFromEnd || 8)))
+              }));
+            }
+            const badge = document.getElementById('tv-candle-count-badge');
+            if (badge) badge.textContent = `${c.candles.length} bars • ${tf} • HL LIVE`;
+            drawTradingViewChart();
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2D Zoom: fx scales Horizontal Time Axis (chartZoom), fy scales Vertical Price Axis (chartScaleY)
+    function zoomChart(fx = 1.18, fy = 1.18) {
+      if (fx !== 1.0) chartZoom = Math.max(0.35, Math.min(5.5, chartZoom * fx));
+      if (fy !== 1.0) chartScaleY = Math.max(0.25, Math.min(8.5, chartScaleY * fy));
       drawTradingViewChart();
     }
+
     function resetChartView() {
       chartZoom = 1.0;
       chartPanX = 0;
+      chartPanY = 0;
       chartScaleY = 1.0;
       drawTradingViewChart();
     }
+
     function setTf(tf) {
       curTf = tf;
       ['1m','5m','15m','1H','4H'].forEach(t => {
-        document.getElementById('tf-' + t).className = (t === tf)
-          ? 'px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold cursor-pointer'
-          : 'px-1.5 py-0.5 rounded text-[var(--text-muted)] cursor-pointer';
+        const btn = document.getElementById('tf-' + t);
+        if (!btn) return;
+        btn.className = (t === tf)
+          ? 'px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold cursor-pointer'
+          : 'px-2 py-0.5 rounded text-[var(--text-muted)] hover:text-white cursor-pointer';
       });
+      chartPanX = 0;
+      chartPanY = 0;
+      ensureTimeframeCandles(curSym, tf);
       drawTradingViewChart();
+      fetchHyperliquidCandles(curSym, tf);
     }
+
     function toggleOverlay(k) {
       overlays[k] = !overlays[k];
-      document.getElementById('ov-' + k).style.opacity = overlays[k] ? '1' : '0.45';
+      const el = document.getElementById('ov-' + k);
+      if (el) el.style.opacity = overlays[k] ? '1' : '0.42';
       drawTradingViewChart();
     }
+
     function toggleChartHeight() {
       chartExpanded = !chartExpanded;
-      document.getElementById('tv-canvas-wrap').style.height = chartExpanded ? '600px' : '430px';
+      document.getElementById('tv-canvas-wrap').style.height = chartExpanded ? '640px' : '460px';
       document.getElementById('btn-chart-size').textContent = chartExpanded ? '↕ Compact' : '↕ Expand';
       setTimeout(drawTradingViewChart, 20);
     }
@@ -1774,98 +1972,295 @@
       const w = rect.width, h = rect.height;
       const isLight = document.body.classList.contains('light-mode');
       const c = COINS[curSym];
+      if (!c) return;
+      const bars = ensureTimeframeCandles(curSym, curTf);
+      if (!bars || !bars.length) return;
 
+      // Background
       ctx.fillStyle = isLight ? '#ffffff' : '#080c14';
       ctx.fillRect(0, 0, w, h);
 
-      const rightAxisW = 76, bottomAxisH = 26;
+      const rightAxisW = 80, bottomAxisH = 26;
       const plotW = w - rightAxisW, plotH = h - bottomAxisH;
 
-      let allPrices = [c.entry, c.sl, c.tp1, c.tp2, c.poc, c.px];
-      c.candles.forEach(bar => allPrices.push(bar.h, bar.l));
-      const midP = (Math.max(...allPrices) + Math.min(...allPrices)) / 2;
-      const halfSpan = ((Math.max(...allPrices) - Math.min(...allPrices)) * 0.62) / chartScaleY;
-      const minP = midP - halfSpan, maxP = midP + halfSpan;
+      // Determine visible horizontal bar spacing (fit ~60 bars by default at chartZoom = 1.0)
+      const visibleDefaultBars = 62;
+      const stepX = Math.max(2.5, ((plotW - 36) / visibleDefaultBars) * chartZoom);
+      const bw = Math.max(2.0, Math.min(26, stepX * 0.68));
+      // Right-anchor the latest candle with a 28px right margin + user horizontal pan (chartPanX)
+      const totalSeriesW = bars.length * stepX;
+      const startX = (plotW - 32 - totalSeriesW) + chartPanX;
+
+      // Compute visible candle price range + active trade levels for smart vertical scaling
+      let visPrices = [c.px];
+      bars.forEach((bar, i) => {
+        const cx = startX + (i + 0.5) * stepX;
+        if (cx >= -stepX && cx <= plotW + stepX) {
+          visPrices.push(bar.h, bar.l);
+        }
+      });
+      if (visPrices.length < 4) {
+        bars.forEach(bar => visPrices.push(bar.h, bar.l));
+      }
+      // Include trade levels in base bounds so Entry/TP/SL are visible at 1.0x zoom
+      [c.entry, c.sl, c.tp1, c.tp2, c.poc].forEach(p => {
+        if (p && Math.abs(p - c.px) / c.px < 0.08) visPrices.push(p);
+      });
+
+      const rawMin = Math.min(...visPrices);
+      const rawMax = Math.max(...visPrices);
+      const midP = (rawMax + rawMin) / 2;
+      const baseHalfSpan = Math.max(c.px * 0.004, (rawMax - rawMin) * 0.60);
+      const halfSpan = baseHalfSpan / chartScaleY;
+
+      // Convert vertical pixel pan (chartPanY) into price shift so dragging up/down pans the price axis smoothly!
+      const pxPerPixel = (halfSpan * 2) / Math.max(80, plotH - 32);
+      const priceShift = chartPanY * pxPerPixel;
+      const minP = midP - halfSpan + priceShift;
+      const maxP = midP + halfSpan + priceShift;
+
       const yOf = p => 16 + (1 - (p - minP) / (maxP - minP)) * (plotH - 32);
       const pOfY = y => maxP - ((y - 16) / (plotH - 32)) * (maxP - minP);
 
-      // Grid & Right Price Scale
-      ctx.strokeStyle = isLight ? '#e2e8f0' : '#151f30';
-      ctx.lineWidth = 1;
-      ctx.font = '10px JetBrains Mono';
-      for (let i = 0; i <= 7; i++) {
-        const py = 16 + (i / 7) * (plotH - 32);
-        ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(plotW, py); ctx.stroke();
-        ctx.fillStyle = isLight ? '#475569' : '#64748b';
-        ctx.fillText(fmtPx(pOfY(py)), plotW + 6, py + 3);
-      }
+      // Subtle TradingView Institutional Watermark
+      ctx.save();
+      ctx.fillStyle = isLight ? 'rgba(15, 23, 42, 0.04)' : 'rgba(148, 163, 184, 0.045)';
+      ctx.font = '900 34px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${c.sym}-PERP • ${curTf}`, plotW * 0.5, plotH * 0.45);
+      ctx.font = 'bold 13px JetBrains Mono, monospace';
+      ctx.fillText(`HYPERLIQUID L2 • ${bars.length} CANDLES • 2D X/Y ZOOM`, plotW * 0.5, plotH * 0.45 + 24);
+      ctx.restore();
 
-      // VPVR Histogram
-      if (overlays.vpvr) {
-        for (let b = 0; b < 18; b++) {
-          const by = 16 + (b / 18) * (plotH - 32);
-          const distPoc = Math.abs(pOfY(by) - c.poc) / (maxP - minP);
-          const barLen = Math.max(8, Math.exp(-distPoc * 9) * 64);
-          ctx.fillStyle = distPoc < 0.04 ? 'rgba(245, 158, 11, 0.38)' : 'rgba(56, 189, 248, 0.14)';
-          ctx.fillRect(plotW - barLen, by - 4, barLen, (plotH - 32) / 18 - 2);
+      // Clip main plot area so candles/overlays don't bleed into the Right Price Axis or Bottom Time Axis
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, plotW, plotH);
+      ctx.clip();
+
+      // Horizontal & Vertical Grid Lines
+      ctx.strokeStyle = isLight ? '#e2e8f0' : '#131d2e';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 8; i++) {
+        const py = 16 + (i / 8) * (plotH - 32);
+        ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(plotW, py); ctx.stroke();
+      }
+      const gridStepBars = Math.max(4, Math.round(12 / chartZoom));
+      for (let i = 0; i < bars.length; i += gridStepBars) {
+        const gx = startX + (i + 0.5) * stepX;
+        if (gx >= 0 && gx <= plotW) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, plotH); ctx.stroke();
         }
       }
 
-      const bars = c.candles;
-      const stepX = ((plotW - 30) / (bars.length + 4)) * chartZoom;
-      const bw = Math.max(5, Math.min(22, stepX * 0.62));
-      const startX = 24 + chartPanX;
+      // Bottom Volume Histogram Sub-Pane (bottom 18% of plotH)
+      const maxVol = Math.max(1, ...bars.map(b => b.v || 100));
+      const volMaxH = plotH * 0.17;
+      bars.forEach((bar, i) => {
+        const cx = startX + (i + 0.5) * stepX;
+        if (cx < -stepX || cx > plotW + stepX) return;
+        const vh = ((bar.v || 200) / maxVol) * volMaxH;
+        ctx.fillStyle = bar.c >= bar.o ? 'rgba(16, 185, 129, 0.18)' : 'rgba(244, 63, 94, 0.18)';
+        ctx.fillRect(cx - bw * 0.48, plotH - vh, bw * 0.96, vh);
+      });
+
+      // VPVR Histogram on Right Edge
+      if (overlays.vpvr) {
+        for (let b = 0; b < 22; b++) {
+          const by = 16 + (b / 22) * (plotH - 32);
+          const distPoc = Math.abs(pOfY(by) - c.poc) / (maxP - minP);
+          const barLen = Math.max(8, Math.exp(-distPoc * 8.5) * 72);
+          ctx.fillStyle = distPoc < 0.045 ? 'rgba(245, 158, 11, 0.36)' : 'rgba(56, 189, 248, 0.13)';
+          ctx.fillRect(plotW - barLen, by - 4, barLen, (plotH - 32) / 22 - 2);
+        }
+      }
+
+      // Compute EMA-20 & Session VWAP across all 90 bars
+      const ema20Arr = [];
+      const vwapArr = [];
+      let emaVal = bars[0].c;
+      const kEma = 2 / (20 + 1);
+      let cumPV = 0, cumV = 0;
+      bars.forEach((b, idx) => {
+        emaVal = idx === 0 ? b.c : (b.c - emaVal) * kEma + emaVal;
+        ema20Arr.push(emaVal);
+        const typ = (b.h + b.l + b.c) / 3;
+        const vv = b.v || 300;
+        cumPV += typ * vv;
+        cumV += vv;
+        vwapArr.push(cumPV / cumV);
+      });
 
       // TradingView Risk/Reward Projection Tool
       if (overlays.rrBox) {
-        const entryIdx = c.verdict === 'ARMED' ? bars.length - 1 : Math.max(0, bars.length - 4);
+        const entryIdx = c.verdict === 'ARMED' ? bars.length - 3 : Math.max(4, bars.length - 16);
         const boxX1 = startX + entryIdx * stepX;
-        const boxX2 = Math.min(plotW - 4, boxX1 + stepX * 4.2);
+        const boxX2 = Math.min(plotW - 4, boxX1 + stepX * 14);
         const yEntry = yOf(c.entry), ySl = yOf(c.sl), yTp2 = yOf(c.tp2);
         if (boxX2 > boxX1) {
-          ctx.fillStyle = 'rgba(244, 63, 94, 0.13)';
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.12)';
           ctx.fillRect(boxX1, Math.min(yEntry, ySl), boxX2 - boxX1, Math.abs(ySl - yEntry));
           ctx.strokeStyle = 'rgba(244, 63, 94, 0.45)';
           ctx.strokeRect(boxX1, Math.min(yEntry, ySl), boxX2 - boxX1, Math.abs(ySl - yEntry));
 
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.13)';
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
           ctx.fillRect(boxX1, Math.min(yEntry, yTp2), boxX2 - boxX1, Math.abs(yTp2 - yEntry));
           ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
           ctx.strokeRect(boxX1, Math.min(yEntry, yTp2), boxX2 - boxX1, Math.abs(yTp2 - yEntry));
         }
       }
 
-      const drawLevel = (px, label, color, dash = []) => {
-        const y = yOf(px);
-        if (y < 6 || y > plotH - 6) return;
+      // Draw EMA-20 (Cyan) & Session VWAP (Violet) Lines
+      if (overlays.ema) {
         ctx.save();
-        ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.setLineDash(dash);
-        ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(plotW, y); ctx.stroke();
-        ctx.fillStyle = color; ctx.fillRect(plotW, y - 8, rightAxisW, 16);
-        ctx.fillStyle = '#070a0f'; ctx.font = 'bold 9.5px JetBrains Mono';
-        ctx.fillText(fmtPx(px), plotW + 4, y + 3);
+        ctx.strokeStyle = '#22d3ee';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        let started = false;
+        bars.forEach((_, i) => {
+          const cx = startX + (i + 0.5) * stepX;
+          if (cx < -20 || cx > plotW + 20) return;
+          const ey = yOf(ema20Arr[i]);
+          if (!started) { ctx.moveTo(cx, ey); started = true; } else ctx.lineTo(cx, ey);
+        });
+        ctx.stroke();
+
+        ctx.strokeStyle = '#a855f7';
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        started = false;
+        bars.forEach((_, i) => {
+          const cx = startX + (i + 0.5) * stepX;
+          if (cx < -20 || cx > plotW + 20) return;
+          const vy = yOf(vwapArr[i]);
+          if (!started) { ctx.moveTo(cx, vy); started = true; } else ctx.lineTo(cx, vy);
+        });
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw All 90 Candlesticks (Wicks + Bodies)
+      bars.forEach((bar, i) => {
+        const cx = startX + (i + 0.5) * stepX;
+        if (cx < -20 || cx > plotW + 15) return;
+        const isBull = bar.c >= bar.o;
+        const col = isBull ? '#10b981' : '#f43f5e';
+        ctx.strokeStyle = col;
+        ctx.lineWidth = Math.max(1.1, Math.min(1.8, bw * 0.18));
+        ctx.beginPath();
+        ctx.moveTo(cx, yOf(bar.h));
+        ctx.lineTo(cx, yOf(bar.l));
+        ctx.stroke();
+
+        const yTop = yOf(Math.max(bar.o, bar.c));
+        const yBot = yOf(Math.min(bar.o, bar.c));
+        ctx.fillStyle = col;
+        ctx.fillRect(cx - bw / 2, yTop, bw, Math.max(2.0, yBot - yTop));
+      });
+
+      // Horizontal Structural Level Lines inside Plot Area
+      const drawPlotLevelLine = (px, label, color, dash = []) => {
+        const y = yOf(px);
+        if (y < 4 || y > plotH - 4) return;
+        ctx.save();
+        ctx.strokeStyle = color; ctx.lineWidth = 1.15; ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(plotW, y); ctx.stroke();
+        ctx.fillStyle = isLight ? 'rgba(255,255,255,0.88)' : 'rgba(8, 12, 20, 0.88)';
+        ctx.font = 'bold 9.5px JetBrains Mono';
+        const txt = `${label} ($${fmtPx(px)})`;
+        const tw = ctx.measureText(txt).width + 8;
+        ctx.fillRect(8, y - 13, tw, 13);
         ctx.fillStyle = color;
-        ctx.fillText(`${label} ($${fmtPx(px)})`, 12, y - 4);
+        ctx.fillText(txt, 12, y - 3);
         ctx.restore();
       };
 
-      drawLevel(c.poc, 'VP POC', '#f59e0b', [3, 3]);
-      drawLevel(c.entry, c.verdict === 'ARMED' ? '🎯 ARMED LIMIT TRAP' : 'ACTIVE ENTRY', '#38bdf8', c.verdict === 'ARMED' ? [5, 3] : []);
-      drawLevel(c.sl, c.state.includes('RISK-FREE') ? 'LOCKED BE+FEES SL' : 'HARD STOP ($10 MAX)', '#f43f5e', [4, 3]);
-      drawLevel(c.tp1, 'TP1 (50% LOCK)', '#10b981', [4, 3]);
-      drawLevel(c.tp2, 'TP2 RUNNER', '#10b981', [2, 2]);
+      drawPlotLevelLine(c.poc, 'VP POC', '#f59e0b', [3, 3]);
+      drawPlotLevelLine(c.entry, c.verdict === 'ARMED' ? '🎯 ARMED LIMIT TRAP' : 'ACTIVE ENTRY', '#38bdf8', c.verdict === 'ARMED' ? [5, 3] : []);
+      drawPlotLevelLine(c.sl, c.state.includes('RISK-FREE') ? 'LOCKED BE+FEES SL' : 'STOP LOSS', '#f43f5e', [4, 3]);
+      drawPlotLevelLine(c.tp1, 'TP1 TARGET', '#10b981', [4, 3]);
+      drawPlotLevelLine(c.tp2, 'TP2 RUNNER', '#10b981', [2, 2]);
+      // Live Mark Price Dotted Line
+      drawPlotLevelLine(c.px, 'LIVE MARK', '#38bdf8', [2, 2]);
 
+      // Execution Fill Markers
+      if (overlays.pins && c.markers) {
+        c.markers.forEach((mk, mIdx) => {
+          const bar = bars[mk.idx];
+          if (!bar) return;
+          const cx = startX + (mk.idx + 0.5) * stepX;
+          if (cx < 10 || cx > plotW - 10) return;
+          const py = yOf(mk.px);
+          const stagger = (mIdx % 2) * 16;
+          const badgeY = mk.pos === 'above'
+            ? Math.max(18, yOf(bar.h) - 20 - stagger)
+            : Math.min(plotH - 16, yOf(bar.l) + 22 + stagger);
+          ctx.save();
+          ctx.strokeStyle = mk.col; ctx.lineWidth = 1.25;
+          ctx.beginPath(); ctx.moveTo(cx, py); ctx.lineTo(cx, badgeY); ctx.stroke();
+          ctx.fillStyle = mk.col;
+          ctx.beginPath(); ctx.arc(cx, py, 3.6, 0, Math.PI * 2); ctx.fill();
+          ctx.font = 'bold 9px JetBrains Mono';
+          const txt = `${mk.lbl}`;
+          const tw = ctx.measureText(txt).width + 10;
+          const bx = Math.max(6, Math.min(plotW - tw - 6, cx - tw / 2));
+          ctx.fillStyle = isLight ? 'rgba(255,255,255,0.95)' : 'rgba(9, 13, 22, 0.94)';
+          ctx.fillRect(bx, badgeY - 10, tw, 15);
+          ctx.strokeStyle = mk.col;
+          ctx.strokeRect(bx, badgeY - 10, tw, 15);
+          ctx.fillStyle = mk.col;
+          ctx.fillText(txt, bx + 5, badgeY + 1);
+          ctx.restore();
+        });
+      }
+
+      ctx.restore(); // End Plot Area Clip
+
+      // Right Price Axis Background & Interactive Border (Drag Up/Down to Zoom Y!)
+      ctx.fillStyle = isLight ? '#f8fafc' : '#0b101b';
+      ctx.fillRect(plotW, 0, rightAxisW, plotH);
+      ctx.strokeStyle = isLight ? '#cbd5e1' : '#1e293b';
+      ctx.beginPath();
+      ctx.moveTo(plotW, 0); ctx.lineTo(plotW, h);
+      ctx.moveTo(0, plotH); ctx.lineTo(w, plotH);
+      ctx.stroke();
+
+      // Right Price Axis Labels
+      ctx.font = '10px JetBrains Mono';
+      for (let i = 0; i <= 8; i++) {
+        const py = 16 + (i / 8) * (plotH - 32);
+        ctx.fillStyle = isLight ? '#475569' : '#94a3b8';
+        ctx.fillText(fmtPx(pOfY(py)), plotW + 6, py + 3);
+      }
+      // Subtle "↕ DRAG Y" hint at top of right axis
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 8.5px JetBrains Mono';
+      ctx.fillText(`↕ Y:${chartScaleY.toFixed(1)}x`, plotW + 6, 11);
+
+      // Right Axis Colored Price Tags for Key Levels
+      const drawAxisTag = (px, color) => {
+        const y = yOf(px);
+        if (y < 10 || y > plotH - 10) return;
+        ctx.fillStyle = color;
+        ctx.fillRect(plotW + 1, y - 8, rightAxisW - 2, 16);
+        ctx.fillStyle = '#060911';
+        ctx.font = 'bold 9.5px JetBrains Mono';
+        ctx.fillText(fmtPx(px), plotW + 5, y + 3);
+      };
+      drawAxisTag(c.sl, '#f43f5e');
+      drawAxisTag(c.tp1, '#10b981');
+      drawAxisTag(c.tp2, '#10b981');
+      drawAxisTag(c.entry, '#f59e0b');
+      drawAxisTag(c.px, '#38bdf8');
+
+      // Bottom Time Axis Labels
+      ctx.fillStyle = isLight ? '#f8fafc' : '#0b101b';
+      ctx.fillRect(0, plotH + 1, plotW, bottomAxisH - 1);
       bars.forEach((bar, i) => {
         const cx = startX + (i + 0.5) * stepX;
-        if (cx < -20 || cx > plotW + 10) return;
-        const col = bar.c >= bar.o ? '#10b981' : '#f43f5e';
-        ctx.strokeStyle = col; ctx.lineWidth = 1.35;
-        ctx.beginPath(); ctx.moveTo(cx, yOf(bar.h)); ctx.lineTo(cx, yOf(bar.l)); ctx.stroke();
-        const yTop = yOf(Math.max(bar.o, bar.c)), yBot = yOf(Math.min(bar.o, bar.c));
-        ctx.fillStyle = col;
-        ctx.fillRect(cx - bw / 2, yTop, bw, Math.max(2.5, yBot - yTop));
-
-        if (i % Math.max(1, Math.round(2 / chartZoom)) === 0) {
+        if (cx < 24 || cx > plotW - 24) return;
+        if (i % gridStepBars === 0 || i === bars.length - 1) {
           ctx.fillStyle = isLight ? '#475569' : '#64748b';
           ctx.font = '9.5px JetBrains Mono';
           ctx.textAlign = 'center';
@@ -1874,34 +2269,13 @@
         }
       });
 
-      if (overlays.pins && c.markers) {
-        c.markers.forEach(mk => {
-          const bar = bars[mk.idx];
-          if (!bar) return;
-          const cx = startX + (mk.idx + 0.5) * stepX;
-          if (cx < 10 || cx > plotW - 10) return;
-          const py = yOf(mk.px);
-          const badgeY = mk.pos === 'above' ? Math.max(18, yOf(bar.h) - 22) : Math.min(plotH - 14, yOf(bar.l) + 22);
-          ctx.save();
-          ctx.strokeStyle = mk.col; ctx.lineWidth = 1.3;
-          ctx.beginPath(); ctx.moveTo(cx, py); ctx.lineTo(cx, badgeY); ctx.stroke();
-          ctx.fillStyle = mk.col;
-          ctx.beginPath(); ctx.arc(cx, py, 3.8, 0, Math.PI * 2); ctx.fill();
-          ctx.font = 'bold 9.5px JetBrains Mono';
-          const txt = `${mk.lbl} (${mk.time.replace(' PST','')})`;
-          const tw = ctx.measureText(txt).width + 10;
-          const bx = Math.max(6, Math.min(plotW - tw - 6, cx - tw / 2));
-          ctx.fillStyle = isLight ? 'rgba(255,255,255,0.95)' : 'rgba(9, 13, 22, 0.94)';
-          ctx.fillRect(bx, badgeY - 10, tw, 16);
-          ctx.strokeStyle = mk.col;
-          ctx.strokeRect(bx, badgeY - 10, tw, 16);
-          ctx.fillStyle = mk.col;
-          ctx.fillText(txt, bx + 5, badgeY + 1);
-          ctx.restore();
-        });
-      }
-
+      // Update Top OHLCV + EMA20 + VWAP Live Readout Bar (Hovered candle or latest candle)
+      let activeIdx = bars.length - 1;
       if (hoverMouse && hoverMouse.x < plotW && hoverMouse.y < plotH) {
+        const hIdx = Math.floor((hoverMouse.x - startX) / stepX);
+        if (hIdx >= 0 && hIdx < bars.length) activeIdx = hIdx;
+
+        // Crosshair Lines + Price & Time Callout Pills
         ctx.save();
         ctx.strokeStyle = isLight ? '#475569' : '#94a3b8';
         ctx.lineWidth = 0.9; ctx.setLineDash([4, 4]);
@@ -1909,79 +2283,221 @@
         ctx.moveTo(hoverMouse.x, 0); ctx.lineTo(hoverMouse.x, plotH);
         ctx.moveTo(0, hoverMouse.y); ctx.lineTo(plotW, hoverMouse.y);
         ctx.stroke();
-        ctx.fillStyle = '#38bdf8';
-        ctx.fillRect(plotW, hoverMouse.y - 8, rightAxisW, 16);
-        ctx.fillStyle = '#070a0f'; ctx.font = 'bold 9.5px JetBrains Mono';
-        ctx.fillText(fmtPx(pOfY(hoverMouse.y)), plotW + 4, hoverMouse.y + 3);
+
+        // Right Axis Crosshair Price Pill
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(plotW + 1, hoverMouse.y - 8, rightAxisW - 2, 16);
+        ctx.fillStyle = '#0f172a'; ctx.font = 'bold 9.5px JetBrains Mono';
+        ctx.fillText(fmtPx(pOfY(hoverMouse.y)), plotW + 5, hoverMouse.y + 3);
+
+        // Bottom Axis Crosshair Time Pill
+        const hBar = bars[activeIdx];
+        if (hBar) {
+          const tw = 52;
+          const tx = Math.max(4, Math.min(plotW - tw - 4, hoverMouse.x - tw / 2));
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(tx, plotH + 2, tw, 18);
+          ctx.fillStyle = '#060911';
+          ctx.textAlign = 'center';
+          ctx.fillText(hBar.t, tx + tw / 2, plotH + 14);
+          ctx.textAlign = 'left';
+        }
         ctx.restore();
+      }
+
+      const bCur = bars[activeIdx] || bars[bars.length - 1];
+      if (bCur) {
+        const elO = document.getElementById('hud-o');
+        const elH = document.getElementById('hud-h');
+        const elL = document.getElementById('hud-l');
+        const elC = document.getElementById('hud-c');
+        const elV = document.getElementById('hud-v');
+        const elEma = document.getElementById('hud-ema');
+        const elVwap = document.getElementById('hud-vwap');
+        if (elO) elO.textContent = '$' + fmtPx(bCur.o);
+        if (elH) elH.textContent = '$' + fmtPx(bCur.h);
+        if (elL) elL.textContent = '$' + fmtPx(bCur.l);
+        if (elC) elC.textContent = '$' + fmtPx(bCur.c);
+        if (elV) elV.textContent = bCur.v || '—';
+        if (elEma && ema20Arr[activeIdx]) elEma.textContent = `EMA20: $${fmtPx(ema20Arr[activeIdx])}`;
+        if (elVwap && vwapArr[activeIdx]) elVwap.textContent = `VWAP: $${fmtPx(vwapArr[activeIdx])}`;
       }
     }
 
     function initChartInteractions() {
       const wrap = document.getElementById('tv-canvas-wrap');
       const canvas = document.getElementById('tv-canvas');
+
+      // Double-click anywhere on chart or price axis -> Auto-Fit Reset
+      wrap.addEventListener('dblclick', () => resetChartView());
+
+      // Wheel Zoom: Right Axis = Vertical Y Only | Bottom Axis or Shift = Horizontal X Only | Canvas = Both X & Y!
       wrap.addEventListener('wheel', e => {
         e.preventDefault();
-        zoomChart(e.deltaY < 0 ? 1.12 : 0.89);
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const factor = e.deltaY < 0 ? 1.14 : 0.88;
+        if (x > rect.width - 80 || e.altKey || e.ctrlKey) {
+          // Zoom Vertical Price Axis only
+          zoomChart(1.0, factor);
+        } else if (y > rect.height - 28 || e.shiftKey) {
+          // Zoom Horizontal Time Axis only
+          zoomChart(factor, 1.0);
+        } else {
+          // Zoom BOTH Horizontal (X) & Vertical (Y) simultaneously like TradingView pinch/zoom!
+          zoomChart(factor, factor);
+        }
       }, { passive: false });
 
+      // Mouse Down: Check if dragging Right Price Axis (Scale Y), Bottom Time Axis (Scale X), or Main Canvas (2D Pan X+Y)
       wrap.addEventListener('mousedown', e => {
         const rect = canvas.getBoundingClientRect();
-        if (e.clientX - rect.left > rect.width - 76) {
-          isDraggingY = true; dragStartY = e.clientY;
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        if (x > rect.width - 80) {
+          isDraggingY = true;
+          dragStartY = e.clientY;
+        } else if (y > rect.height - 28) {
+          isDraggingBottomX = true;
+          dragStartX = e.clientX;
         } else {
-          isDraggingX = true; dragStartX = e.clientX - chartPanX;
+          isDraggingX = true;
+          dragStartX = e.clientX - chartPanX;
+          dragStartPanY = e.clientY - chartPanY;
         }
       });
+
       window.addEventListener('mousemove', e => {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left, y = e.clientY - rect.top;
-        if (isDraggingX) { chartPanX = e.clientX - dragStartX; drawTradingViewChart(); return; }
+
+        // Update cursor dynamically over axes
+        if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+          if (x > rect.width - 80) wrap.style.cursor = 'ns-resize';
+          else if (y > rect.height - 28) wrap.style.cursor = 'ew-resize';
+          else wrap.style.cursor = isDraggingX ? 'grabbing' : 'crosshair';
+        }
+
+        if (isDraggingX) {
+          chartPanX = e.clientX - dragStartX;
+          chartPanY = e.clientY - dragStartPanY;
+          drawTradingViewChart();
+          return;
+        }
         if (isDraggingY) {
-          const dy = e.clientY - dragStartY; dragStartY = e.clientY;
-          chartScaleY = Math.max(0.4, Math.min(3.5, chartScaleY * (1 - dy * 0.005)));
-          drawTradingViewChart(); return;
+          const dy = e.clientY - dragStartY;
+          dragStartY = e.clientY;
+          chartScaleY = Math.max(0.25, Math.min(8.5, chartScaleY * (1 - dy * 0.0065)));
+          drawTradingViewChart();
+          return;
+        }
+        if (isDraggingBottomX) {
+          const dx = e.clientX - dragStartX;
+          dragStartX = e.clientX;
+          chartZoom = Math.max(0.35, Math.min(5.5, chartZoom * (1 + dx * 0.0055)));
+          drawTradingViewChart();
+          return;
         }
         if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-          hoverMouse = { x, y }; drawTradingViewChart();
+          hoverMouse = { x, y };
+          drawTradingViewChart();
         }
       });
-      window.addEventListener('mouseup', () => { isDraggingX = false; isDraggingY = false; });
-      wrap.addEventListener('mouseleave', () => { hoverMouse = null; drawTradingViewChart(); });
 
-      // iPhone / Duo Touchscreen Gestures (1-Finger Pan + 2-Finger Pinch-to-Zoom)
+      window.addEventListener('mouseup', () => {
+        isDraggingX = false;
+        isDraggingY = false;
+        isDraggingBottomX = false;
+      });
+      wrap.addEventListener('mouseleave', () => {
+        hoverMouse = null;
+        drawTradingViewChart();
+      });
+
+      // iPhone / Surface Duo Touchscreen Gestures:
+      // - 1 Finger on Right Axis = Vertical Scale Y
+      // - 1 Finger on Bottom Axis = Horizontal Scale X
+      // - 1 Finger on Canvas = Full 2D Pan (X + Y)
+      // - 2 Finger Pinch = Independent Horizontal (dx) + Vertical (dy) 2D Pinch Zoom!
       let touchPinchDist = 0;
+      let touchPinchDx = 0;
+      let touchPinchDy = 0;
+
       wrap.addEventListener('touchstart', e => {
+        const rect = canvas.getBoundingClientRect();
         if (e.touches.length === 1) {
-          isDraggingX = true;
-          dragStartX = e.touches[0].clientX - chartPanX;
+          const tx = e.touches[0].clientX - rect.left;
+          const ty = e.touches[0].clientY - rect.top;
+          if (tx > rect.width - 80) {
+            isDraggingY = true;
+            dragStartY = e.touches[0].clientY;
+          } else if (ty > rect.height - 28) {
+            isDraggingBottomX = true;
+            dragStartX = e.touches[0].clientX;
+          } else {
+            isDraggingX = true;
+            dragStartX = e.touches[0].clientX - chartPanX;
+            dragStartPanY = e.touches[0].clientY - chartPanY;
+            hoverMouse = { x: tx, y: ty };
+            drawTradingViewChart();
+          }
         } else if (e.touches.length === 2) {
           isDraggingX = false;
-          touchPinchDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
+          isDraggingY = false;
+          isDraggingBottomX = false;
+          touchPinchDx = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
+          touchPinchDy = Math.abs(e.touches[0].clientY - e.touches[1].clientY);
+          touchPinchDist = Math.hypot(touchPinchDx, touchPinchDy);
         }
       }, { passive: true });
 
       wrap.addEventListener('touchmove', e => {
-        if (e.touches.length === 1 && isDraggingX) {
-          e.preventDefault();
-          chartPanX = e.touches[0].clientX - dragStartX;
-          drawTradingViewChart();
+        if (e.touches.length === 1) {
+          if (isDraggingY) {
+            e.preventDefault();
+            const dy = e.touches[0].clientY - dragStartY;
+            dragStartY = e.touches[0].clientY;
+            chartScaleY = Math.max(0.25, Math.min(8.5, chartScaleY * (1 - dy * 0.007)));
+            drawTradingViewChart();
+          } else if (isDraggingBottomX) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - dragStartX;
+            dragStartX = e.touches[0].clientX;
+            chartZoom = Math.max(0.35, Math.min(5.5, chartZoom * (1 + dx * 0.006)));
+            drawTradingViewChart();
+          } else if (isDraggingX) {
+            e.preventDefault();
+            chartPanX = e.touches[0].clientX - dragStartX;
+            chartPanY = e.touches[0].clientY - dragStartPanY;
+            const rect = canvas.getBoundingClientRect();
+            hoverMouse = {
+              x: e.touches[0].clientX - rect.left,
+              y: e.touches[0].clientY - rect.top
+            };
+            drawTradingViewChart();
+          }
         } else if (e.touches.length === 2 && touchPinchDist > 0) {
           e.preventDefault();
-          const newDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          zoomChart(newDist > touchPinchDist ? 1.04 : 0.96);
+          const newDx = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
+          const newDy = Math.abs(e.touches[0].clientY - e.touches[1].clientY);
+          const newDist = Math.hypot(newDx, newDy);
+
+          const radialFactor = newDist > touchPinchDist ? 1.035 : 0.966;
+          const fx = Math.abs(newDx - touchPinchDx) > 3 ? (newDx > touchPinchDx ? 1.045 : 0.957) : radialFactor;
+          const fy = Math.abs(newDy - touchPinchDy) > 3 ? (newDy > touchPinchDy ? 1.045 : 0.957) : radialFactor;
+
+          zoomChart(fx, fy);
+          touchPinchDx = newDx;
+          touchPinchDy = newDy;
           touchPinchDist = newDist;
         }
       }, { passive: false });
 
       wrap.addEventListener('touchend', () => {
         isDraggingX = false;
+        isDraggingY = false;
+        isDraggingBottomX = false;
         touchPinchDist = 0;
       });
     }
@@ -2285,13 +2801,24 @@
           c.sl    = +(c.sl * ratio).toFixed(6);
           c.tp1   = +(c.tp1 * ratio).toFixed(6);
           c.tp2   = +(c.tp2 * ratio).toFixed(6);
-          if (c.candles && c.candles.length) {
-            c.candles.forEach(bar => {
-              bar.o = +(bar.o * ratio).toFixed(6);
-              bar.h = +(bar.h * ratio).toFixed(6);
-              bar.l = +(bar.l * ratio).toFixed(6);
-              bar.c = +(bar.c * ratio).toFixed(6);
+          if (c.poc) c.poc = +(c.poc * ratio).toFixed(6);
+          if (c.vah) c.vah = +(c.vah * ratio).toFixed(6);
+          if (c.val) c.val = +(c.val * ratio).toFixed(6);
+          if (c.tfCandles) {
+            Object.keys(c.tfCandles).forEach(tfKey => {
+              // Only scale synthetic fallback candles, not real HL candleSnapshot bars
+              if (!c.hlLiveTf || !c.hlLiveTf[tfKey]) {
+                c.tfCandles[tfKey].forEach(bar => {
+                  bar.o = +(bar.o * ratio).toFixed(6);
+                  bar.h = +(bar.h * ratio).toFixed(6);
+                  bar.l = +(bar.l * ratio).toFixed(6);
+                  bar.c = +(bar.c * ratio).toFixed(6);
+                });
+              }
             });
+          }
+          if (c.baseMarkers && c.baseMarkers.length) {
+            c.baseMarkers.forEach(m => { m.px = +(m.px * ratio).toFixed(6); });
           }
           if (c.markers && c.markers.length) {
             c.markers.forEach(m => { m.px = +(m.px * ratio).toFixed(6); });
@@ -2427,12 +2954,17 @@
             if (livePx > 0) {
               if (!COINS[sym].origPx) COINS[sym].origPx = COINS[sym].px;
               COINS[sym].px = livePx;
+              ensureTimeframeCandles(sym, curTf);
               evaluateDynamicTargetAndFlip(sym, livePx);
-              const lastBar = COINS[sym].candles[COINS[sym].candles.length - 1];
-              if (lastBar) {
-                lastBar.c = livePx;
-                if (livePx > lastBar.h) lastBar.h = livePx;
-                if (livePx < lastBar.l) lastBar.l = livePx;
+              if (COINS[sym].tfCandles) {
+                Object.values(COINS[sym].tfCandles).forEach(series => {
+                  const lb = series[series.length - 1];
+                  if (lb) {
+                    lb.c = livePx;
+                    if (livePx > lb.h) lb.h = livePx;
+                    if (livePx < lb.l) lb.l = livePx;
+                  }
+                });
               }
             }
           }
@@ -2466,6 +2998,7 @@
     }
 
     window.addEventListener('resize', drawTradingViewChart);
+    Object.keys(COINS).forEach(sym => ensureTimeframeCandles(sym, curTf));
     initChartInteractions();
     renderCoinSelectors();
     updateInspectorAndFocusCard();
@@ -2474,7 +3007,11 @@
     renderScrubTable();
     renderBookAndHistory();
     requestAnimationFrame(animateGrokFlow);
-    setTimeout(drawTradingViewChart, 40);
+    setTimeout(() => {
+      drawTradingViewChart();
+      fetchHyperliquidCandles(curSym, curTf);
+      pollHyperliquidLive();
+    }, 40);
     setInterval(pollHyperliquidLive, 3000);
   </script>
 </body>
