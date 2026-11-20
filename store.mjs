@@ -8,7 +8,7 @@ export async function openPaperStore(directory) {
  const dir=resolve(directory),path=join(dir,'account.json'),lock=join(dir,'writer.lock');
  await mkdir(dir,{recursive:true,mode:0o700});
  try{await mkdir(lock);}catch{throw Error('paper_store_locked');}
- let account,queue=Promise.resolve(),closed=false,poisoned=false;
+ let account,queue=Promise.resolve(),closed=false,poisoned=false,closing;
  async function save(value){
   if(value?.simulated!==true||value.currency!=='USD'||!Array.isArray(value.fills)||!Array.isArray(value.positions)||!/^\d+\.\d{8}$/.test(value.cash))throw Error('invalid_account');
   const temporary=join(dir,'account.pending');
@@ -28,6 +28,13 @@ export async function openPaperStore(directory) {
    const operation=queue.then(async()=>{if(poisoned)throw Error('store_unavailable');const next=await fn(structuredClone(account));try{await save(next);}catch(e){poisoned=true;throw e;}account=structuredClone(next);return structuredClone(account);});
    queue=operation.catch(()=>{});return operation;
   },
-  async close(){closed=true;await queue;await rm(lock,{recursive:true});}
+  close(){
+   // Release this writer's lock once, even if shutdown is requested again
+   // after a replacement writer has acquired it.
+   if(closing)return closing;
+   closed=true;
+   closing=(async()=>{await queue;await rm(lock,{recursive:true});})();
+   return closing;
+  }
  };
 }
